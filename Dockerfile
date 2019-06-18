@@ -25,8 +25,6 @@ FROM node:10.15.3-alpine
 LABEL maintainer="https://github.com/verdaccio/verdaccio"
 
 ENV VERDACCIO_APPDIR=/opt/verdaccio \
-    VERDACCIO_USER_NAME=verdaccio \
-    VERDACCIO_USER_UID=10001 \
     VERDACCIO_PORT=4873 \
     VERDACCIO_PROTOCOL=http
 ENV PATH=$VERDACCIO_APPDIR/docker-bin:$PATH \
@@ -42,12 +40,7 @@ COPY --from=builder /opt/verdaccio-build .
 
 ADD conf/docker.yaml /verdaccio/conf/config.yaml
 
-RUN adduser -u $VERDACCIO_USER_UID -S -D -h $VERDACCIO_APPDIR -g "$VERDACCIO_USER_NAME user" -s /sbin/nologin $VERDACCIO_USER_NAME && \
-    chmod -R +x $VERDACCIO_APPDIR/bin $VERDACCIO_APPDIR/docker-bin && \
-    chown -R $VERDACCIO_USER_UID:root /verdaccio/storage && \
-    chmod -R g=u /verdaccio/storage /etc/passwd
-
-USER $VERDACCIO_USER_UID
+RUN chmod -R +x $VERDACCIO_APPDIR/bin $VERDACCIO_APPDIR/docker-bin
 
 EXPOSE $VERDACCIO_PORT
 
